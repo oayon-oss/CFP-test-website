@@ -1424,6 +1424,11 @@
       <!-- Right: Form -->
       <div class="reveal reveal-delay-2">
         <form class="inquiry-form" id="inquiryForm" onsubmit="submitForm(event)">
+          <!-- Web3Forms — delivers to estimate@constructionandfacilitiespros.com -->
+          <input type="hidden" name="access_key" value="f1649ba3-0a28-466b-92c3-57f521a97112" />
+          <input type="hidden" name="subject" value="New Estimate Request — CFP Website" />
+          <input type="hidden" name="from_name" value="CFP Website Inquiry" />
+          <input type="hidden" name="redirect" value="false" />
           <h3>Tell Us About Your Project</h3>
           <p>We'll get back to you within 24 hours with a free estimate.</p>
           <div class="success-msg" id="successMsg">
@@ -1622,18 +1627,36 @@
     });
   }
 
-  /* ---- Inquiry form (demo submit) ---- */
-  function submitForm(e) {
+  /* ---- Inquiry form — delivers to estimate@constructionandfacilitiespros.com via Web3Forms ---- */
+  async function submitForm(e) {
     e.preventDefault();
+    const form    = e.target;
     const fields  = document.getElementById('formFields');
     const success = document.getElementById('successMsg');
-    const btn = fields.querySelector('[type="submit"]');
-    btn.disabled = true;
+    const btn     = fields.querySelector('[type="submit"]');
+
+    btn.disabled    = true;
     btn.textContent = 'Sending…';
-    setTimeout(() => {
-      fields.style.display = 'none';
-      success.style.display = 'block';
-    }, 900);
+
+    try {
+      const res  = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body:   new FormData(form)
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        fields.style.display  = 'none';
+        success.style.display = 'block';
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      btn.disabled    = false;
+      btn.textContent = 'Send My Free Quote Request';
+      alert('Something went wrong. Please try again or call us at (253) 440-2824.');
+      console.error(err);
+    }
   }
 
   /* ---- Smooth active nav highlight on scroll ---- */
