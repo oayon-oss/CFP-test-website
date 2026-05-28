@@ -1657,6 +1657,11 @@
       if (data.success) {
         fields.style.display  = 'none';
         success.style.display = 'block';
+        gtag('event', 'conversion', {
+          'send_to': 'AW-18173451733/C25VCJ7qhLUcENW749lD',
+          'value':    1.0,
+          'currency': 'USD'
+        });
       } else {
         throw new Error(data.message || 'Submission failed');
       }
